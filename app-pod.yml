@@ -9,6 +9,23 @@ spec:
     - image: showflake-id-generator:0.0.1
       name: snowflake-id-generator-app
       imagePullPolicy: IfNotPresent
+      livenessProbe:
+        httpGet:
+          path: /management/health/livenessState
+          port: 8080
+        initialDelaySeconds: 15
+        periodSeconds: 20
+        timeoutSeconds: 2
+        failureThreshold: 3
+      readinessProbe:
+        httpGet:
+          path: /management/health/readinessState
+          port: 8080
+        initialDelaySeconds: 5
+        periodSeconds: 5
+        timeoutSeconds: 1
+        failureThreshold: 3
+        successThreshold: 1
       ports:
         - containerPort: 8080
           name: http
