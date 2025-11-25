@@ -6,7 +6,7 @@ metadata:
     app: snowflake-id-generator
 spec:
   containers:
-    - image: showflake-id-generator:0.0.1
+    - image: snowflake-id-generator:0.0.1
       name: snowflake-id-generator-app
       imagePullPolicy: IfNotPresent
       livenessProbe:
