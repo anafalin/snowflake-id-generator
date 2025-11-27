@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: snowflake-app-replicaset
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: snowflake-app
+  template:
+    metadata:
+      labels:
+        app: snowflake-app
+    spec:
+      containers:
+        - image: snowflake-id-generator:0.0.2
+          name: snowflake-id-generator-app
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /management/health/livenessState
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 2
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /management/health/readinessState
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 1
+            failureThreshold: 3
+            successThreshold: 1
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
