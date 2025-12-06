@@ -1,11 +1,14 @@
 spring:
   application:
-    name: "Snowflake ID Generator"
+    name: ${APPLICATION_NAME:Snowflake ID Generator Local}
 
 snowflake-settings:
-  starting-epoch: 946684800
-  datacenter-id: 1
-  worked-id: 1
+  starting-epoch: ${STARTING_EPOCH}
+  datacenter-id: ${DATACENTER_ID}
+  worked-id: ${WORKED_ID}
+
+kubernetes-settings:
+  pod-name: ${POD_NAME:local}
 
 kubernetes-settings:
   pod-name: ${POD_NAME:local}
