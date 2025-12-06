@@ -13,7 +13,7 @@ spec:
         app: snowflake-app
     spec:
       containers:
-        - image: snowflake-id-generator:0.0.2
+        - image: snowflake-id-generator:0.0.1
           name: snowflake-id-generator-app
           imagePullPolicy: IfNotPresent
           env:
