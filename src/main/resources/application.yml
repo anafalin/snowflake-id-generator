@@ -8,7 +8,7 @@ snowflake-settings:
   worked-id: 1
 
 kubernetes-settings:
-  podName: ${POD_NAME:local}
+  pod-name: ${POD_NAME:local}
 
 management:
   endpoints:

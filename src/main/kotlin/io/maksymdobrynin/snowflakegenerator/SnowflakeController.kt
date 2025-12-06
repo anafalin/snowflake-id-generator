@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController("/v1")
 class SnowflakeController(
-	@Value("\${kubernetes-settings.podName}") private var podName: String,
+	@Value("\${kubernetes-settings.pod-name}") private var podName: String,
 	private val generator: Generator
 ) {
 	private val log = LoggerFactory.getLogger(SnowflakeController::class.java)
