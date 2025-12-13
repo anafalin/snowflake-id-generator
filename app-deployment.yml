@@ -1,0 +1,107 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: snowflake-app-deployment
+  labels:
+    app: snowflake-app
+  annotations:
+    kubernetes.io/change-cause: "Update v.0.0.1"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: snowflake-app
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  template:
+    metadata:
+      labels:
+        app: snowflake-app
+    spec:
+      initContainers:
+        - name: generate-random-long
+          image: busybox:latest
+          command: [ "/bin/sh", "-c" ]
+          args:
+            - |
+              LONG_RANDOM_ID=$(( RANDOM % 32 ))
+              echo "Generated Long LONG_RANDOM_ID: LONG_RANDOM_ID"
+              echo "$LONG_RANDOM_ID" > /config/LONG_RANDOM_ID
+          volumeMounts:
+            - name: config
+              mountPath: /config
+      containers:
+        - name: snowflake-id-generator-app
+          image: snowflake-id-generator:0.0.1
+          imagePullPolicy: IfNotPresent
+          command: ['sh', '-c']
+          args:
+            - |
+              if [ -f /config/LONG_RANDOM_ID ]; then
+                WORKED_ID=$(cat /config/LONG_RANDOM_ID)
+                export WORKED_ID
+                echo "Using Worked ID: $WORKED_ID"
+              else
+                export WORKED_ID=0
+                echo "Using default Worked ID: 1"
+              fi
+
+              exec java -jar app.jar
+          env:
+            - name: APPLICATION_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: snowflake-app-config
+                  key: APPLICATION_NAME
+            - name: STARTING_EPOCH
+              valueFrom:
+                configMapKeyRef:
+                  name: snowflake-app-config
+                  key: STARTING_EPOCH
+            - name: DATACENTER_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: snowflake-app-config
+                  key: DATACENTER_ID
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          volumeMounts:
+            - name: config
+              mountPath: /config
+              readOnly: true
+          livenessProbe:
+            httpGet:
+              path: /management/health/livenessState
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 2
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /management/health/readinessState
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 1
+            failureThreshold: 3
+            successThreshold: 1
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+      volumes:
+        - name: config
+          emptyDir: {}
