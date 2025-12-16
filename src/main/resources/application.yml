@@ -10,9 +10,6 @@ snowflake-settings:
 kubernetes-settings:
   pod-name: ${POD_NAME:local}
 
-kubernetes-settings:
-  pod-name: ${POD_NAME:local}
-
 management:
   endpoints:
     web:
