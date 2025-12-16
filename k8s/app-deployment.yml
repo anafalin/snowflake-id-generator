@@ -7,7 +7,7 @@ metadata:
   annotations:
     kubernetes.io/change-cause: "Update v.0.0.1"
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: snowflake-app
@@ -97,11 +97,11 @@ spec:
               protocol: TCP
           resources:
             requests:
-              memory: "128Mi"
-              cpu: "100m"
-            limits:
               memory: "256Mi"
               cpu: "500m"
+            limits:
+              memory: "500Mi"
+              cpu: "1000m"
       volumes:
         - name: config
           emptyDir: {}
