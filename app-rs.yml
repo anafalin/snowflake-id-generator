@@ -1,7 +1,9 @@
 apiVersion: apps/v1
 kind: ReplicaSet
 metadata:
-  name: snowflake-app-replicaset
+  name: snowflake-app-rs
+  labels:
+    app: snowflake-app
 spec:
   replicas: 3
   selector:
@@ -12,15 +14,59 @@ spec:
       labels:
         app: snowflake-app
     spec:
+      initContainers:
+        - name: init-settings
+          image: alpine:latest
+          command: [ 'sh', '-c' ]
+          args:
+            - |
+              WORKED_ID=$(( (RANDOM % 31) + 1 ))
+              echo "$WORKED_ID" > /snowflake-init-config/snowflake-settings.worked-id
+              echo "WORKED_ID: $WORKED_ID"
+          volumeMounts:
+            - name: snowflake-init-volume
+              mountPath: /snowflake-init-config
       containers:
-        - image: snowflake-id-generator:0.0.1
-          name: snowflake-id-generator-app
+        - name: snowflake-id-generator-app
+          image: snowflake-id-generator:0.0.1
           imagePullPolicy: IfNotPresent
+          command: ['sh', '-c']
+          args:
+            - |
+              if [ -f /snowflake-init-config/snowflake-settings.worked-id ]; then
+                WORKED_ID=$(cat /snowflake-init-config/snowflake-settings.worked-id)
+                export WORKED_ID
+                echo "Using Worked ID: $WORKED_ID"
+              else
+                export WORKED_ID=0
+                echo "Using default Worked ID: 1"
+              fi
+
+              exec java -jar app.jar
           env:
+            - name: APPLICATION_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: snowflake-app-config
+                  key: APPLICATION_NAME
+            - name: STARTING_EPOCH
+              valueFrom:
+                configMapKeyRef:
+                  name: snowflake-app-config
+                  key: STARTING_EPOCH
+            - name: DATACENTER_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: snowflake-app-config
+                  key: DATACENTER_ID
             - name: POD_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+          volumeMounts:
+            - name: snowflake-init-volume
+              mountPath: /snowflake-init-config
+              readOnly: true
           livenessProbe:
             httpGet:
               path: /management/health/livenessState
@@ -49,3 +95,6 @@ spec:
             limits:
               memory: "256Mi"
               cpu: "500m"
+      volumes:
+        - name: snowflake-init-volume
+          emptyDir: {}

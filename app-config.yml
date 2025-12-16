@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: snowflake-app-config
+data:
+  APPLICATION_NAME: "Snowflake ID Generator"
+  STARTING_EPOCH: "946684800"
+  DATACENTER_ID: "1"
