@@ -21,3 +21,5 @@ Thumbs.db
 *.log
 test-output
 reports/
+
+/k8s
