@@ -1,6 +1,17 @@
 spring:
   application:
     name: ${APPLICATION_NAME:Snowflake ID Generator Local}
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/app_db}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      schema: snowflake
+      connection-init-sql: CREATE SCHEMA IF NOT EXISTS ${spring.datasource.hikari.schema};
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog.xml
 
 snowflake-settings:
   starting-epoch: ${STARTING_EPOCH:946684800}
