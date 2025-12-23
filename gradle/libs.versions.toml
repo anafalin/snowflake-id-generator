@@ -8,6 +8,8 @@ kt-lib = "1.9.25"
 ktx-coroutines = "1.9.0"
 junit-jupiter = "5.11.4"
 assertj-core = "3.27.3"
+liquibase-core = "5.0.1"
+postgresql-ver = "42.7.8"
 
 [libraries]
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "gradle-detekt" }
@@ -18,3 +20,6 @@ junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "jun
 assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertj-core" }
 springframework-boot-starter-web = {module ="org.springframework.boot:spring-boot-starter-web"}
 springframework-boot-starter-actuator= {module ="org.springframework.boot:spring-boot-starter-actuator"}
+springframework-boot-starter-jdbc = {module = "org.springframework.boot:spring-boot-starter-jdbc"}
+liquibase = {module = "org.liquibase:liquibase-core", version.ref = "liquibase-core"}
+postgresql = {module ="org.postgresql:postgresql", version.ref = "postgresql-ver"}
