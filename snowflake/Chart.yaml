@@ -1,0 +1,11 @@
+apiVersion: v2
+name: snowflake-id-generator
+description: snowflake id generator application
+type: application
+version: 0.0.1
+appVersion: "stable"
+
+dependencies:
+  - name: postgres
+    version: 0.1.0
+    repository: "file://charts/postgres"

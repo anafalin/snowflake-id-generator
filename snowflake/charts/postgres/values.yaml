@@ -1,0 +1,12 @@
+image:
+  repository: postgres
+  tag: 14
+  pullPolicy: IfNotPresent
+
+postgres:
+  db:
+    name: app_db
+    host: postgres-0.postgres
+    port: 5432
+    user: cG9zdGdyZXM=
+    password: cG9zdGdyZXM=

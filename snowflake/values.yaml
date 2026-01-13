@@ -1,0 +1,37 @@
+replicaCount: 1
+
+image:
+  repository: snowflake-id-generator-app
+  tag: 0.0.1
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8080
+  targetPort: 8080
+
+autoscaling:
+  enabled: true
+  cpu:
+    averageUtilization: 70
+  memory:
+    averageValue: 400Mi
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 5000m
+    memory: 256Mi
+
+ingress:
+  enabled: true
+  className: contour
+  host: snowflake.dev.local
+  tls: true
+  secretName: snowflake-id-generator-tls-cert
+
+db:
+  meta:
+    name: postgres
