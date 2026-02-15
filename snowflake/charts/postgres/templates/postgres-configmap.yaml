@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}-config
+data:
+  DB_NAME: "{{ .Values.postgres.db.name }}"
+  DEFAULT_DB_HOST: "{{ .Values.postgres.db.host }}"
+  DB_PORT: "{{ .Values.postgres.db.port }}"
